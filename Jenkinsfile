@@ -15,6 +15,7 @@ pipeline {
             }
         }
         stage('Artifactory') {
+            steps {
             rtUpload (
                 serverId: 'artifactory-cpp-t1',
                 spec: '''{
@@ -28,6 +29,7 @@ pipeline {
                 buildName: 'holyFrog',
                 buildNumber: '42'
             )
+            }
         }
         stage('Clean for next build') {
             steps {
