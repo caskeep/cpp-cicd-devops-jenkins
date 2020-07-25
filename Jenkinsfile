@@ -38,8 +38,8 @@ pipeline {
                     spec: '''{
                         "files": [
                             {
-                                "pattern": "generic-local/main"
-                                "target": "build/",
+                                "pattern": "generic-local/main",
+                                "target": "build/"
                             }
                         ]
                     }''',
