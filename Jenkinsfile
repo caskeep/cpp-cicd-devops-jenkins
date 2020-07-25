@@ -14,6 +14,21 @@ pipeline {
                 sh 'cd build && ./main'
             }
         }
+        stage('Artifactory') {
+            rtUpload (
+                serverId: 'artifactory-cpp-t1',
+                spec: '''{
+                    "files": [
+                        {
+                            "pattern": "build/main",
+                            "target": "generic-local/"
+                        }
+                    ]
+                }''',
+                buildName: 'holyFrog',
+                buildNumber: '42'
+            )
+        }
         stage('Clean for next build') {
             steps {
                 echo "cleanning" 
