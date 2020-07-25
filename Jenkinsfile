@@ -16,19 +16,36 @@ pipeline {
         }
         stage('Artifactory') {
             steps {
-            rtUpload (
-                serverId: 'artifactory-cpp-t1',
-                spec: '''{
-                    "files": [
-                        {
-                            "pattern": "build/main",
-                            "target": "generic-local/"
-                        }
-                    ]
-                }''',
-                buildName: 'holyFrog',
-                buildNumber: '42'
-            )
+                rtUpload (
+                    serverId: 'artifactory-cpp-t1',
+                    spec: '''{
+                        "files": [
+                            {
+                                "pattern": "build/main",
+                                "target": "generic-local/"
+                            }
+                        ]
+                    }''',
+                    buildName: 'holyFrog',
+                    buildNumber: '42'
+                )
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                rtDownload (
+                    serverId: 'artifactory-cpp-t1',
+                    spec: '''{
+                        "files": [
+                            {
+                                "pattern": "generic-local/main"
+                                "target": "build/",
+                            }
+                        ]
+                    }''',
+                    buildName: 'holyFrog',
+                    buildNumber: '42'
+                )
             }
         }
         stage('Clean for next build') {
