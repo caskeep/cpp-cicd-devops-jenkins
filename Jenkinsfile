@@ -1,7 +1,10 @@
 pipeline {
-    agent any
+    agent none
     stages {
         stage('Build') {
+            agent {
+                label 'build'
+            }
             steps {
                 echo "Build" 
                 sh 'rm -rf build && mkdir -p build && cd build && \
@@ -9,12 +12,18 @@ pipeline {
             }
         }
         stage('Test') {
+            agent {
+                label 'build'
+            }
             steps {
                 echo "Test" 
                 sh 'cd build && ./main'
             }
         }
         stage('Artifactory') {
+            agent {
+                label 'build'
+            }
             steps {
                 rtUpload (
                     serverId: 'artifactory-cpp-t1',
@@ -32,6 +41,9 @@ pipeline {
             }
         }
         stage('Deploy to Production') {
+            agent {
+                label 'production'
+            }
             steps {
                 rtDownload (
                     serverId: 'artifactory-cpp-t1',
