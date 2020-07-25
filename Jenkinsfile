@@ -7,6 +7,7 @@ pipeline {
             }
             steps {
                 echo "Build" 
+                echo "pwd && ls -ahl"
                 sh 'rm -rf build && mkdir -p build && cd build && \
                     cmake -DCAMKE_BUILD_TYPE=Release .. && cmake --build .'
             }
@@ -17,6 +18,7 @@ pipeline {
             }
             steps {
                 echo "Test" 
+                echo "pwd && ls -ahl"
                 sh 'cd build && ./main'
             }
         }
@@ -25,6 +27,7 @@ pipeline {
                 label 'build'
             }
             steps {
+                echo "pwd && ls -ahl"
                 rtUpload (
                     serverId: 'artifactory-cpp-t1',
                     spec: '''{
@@ -45,6 +48,7 @@ pipeline {
                 label 'production'
             }
             steps {
+                echo "pwd && ls -ahl"
                 rtDownload (
                     serverId: 'artifactory-cpp-t1',
                     spec: '''{
@@ -63,12 +67,14 @@ pipeline {
         stage('Clean for next build') {
             steps {
                 echo "cleanning" 
+                echo "pwd && ls -ahl"
                 sh 'git clean -dfx'
             }
         }
         stage('Build container building env') {
             steps {
                 echo "Build container building env" 
+                echo "pwd && ls -ahl"
                 sh "docker build \
                     -t cpp-cicd-devops-jenkins:v${env.BUILD_ID} \
                     -t cpp-cicd-devops-jenkins:latest \
@@ -78,6 +84,7 @@ pipeline {
         stage('Build with container') {
             steps {
                 echo "Build with container" 
+                echo "pwd && ls -ahl"
                 sh "docker build \
                     -t cpp-cicd-devops-jenkins-artifact:v${env.BUILD_ID} \
                     -t cpp-cicd-devops-jenkins-artifact:latest \
@@ -87,6 +94,7 @@ pipeline {
         stage('Test with container') {
             steps {
                 echo "Test with container" 
+                echo "pwd && ls -ahl"
                 sh "docker run --rm cpp-cicd-devops-jenkins-artifact:v${env.BUILD_ID}"
             }
         }
