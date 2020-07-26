@@ -1,10 +1,7 @@
 pipeline {
-    agent none
+    agent { label 'build' }
     stages {
         stage('Build') {
-            agent {
-                label 'build'
-            }
             steps {
                 echo "Build" 
                 sh "pwd && ls -ahl"
@@ -13,9 +10,6 @@ pipeline {
             }
         }
         stage('Test') {
-            agent {
-                label 'build'
-            }
             steps {
                 echo "Test" 
                 sh "pwd && ls -ahl"
@@ -23,9 +17,6 @@ pipeline {
             }
         }
         stage('Artifactory') {
-            agent {
-                label 'build'
-            }
             steps {
                 sh "pwd && ls -ahl"
                 rtUpload (
@@ -35,27 +26,6 @@ pipeline {
                             {
                                 "pattern": "build/main",
                                 "target": "generic-local/"
-                            }
-                        ]
-                    }''',
-                    buildName: 'holyFrog',
-                    buildNumber: '42'
-                )
-            }
-        }
-        stage('Deploy to Production') {
-            agent {
-                label 'production'
-            }
-            steps {
-                sh "pwd && ls -ahl"
-                rtDownload (
-                    serverId: 'artifactory-cpp-t1',
-                    spec: '''{
-                        "files": [
-                            {
-                                "pattern": "generic-local/main",
-                                "target": "build/"
                             }
                         ]
                     }''',
@@ -96,6 +66,27 @@ pipeline {
                 echo "Test with container" 
                 sh "pwd && ls -ahl"
                 sh "docker run --rm cpp-cicd-devops-jenkins-artifact:v${env.BUILD_ID}"
+            }
+        }
+        stage('Deploy to Production') {
+            agent {
+                label 'production'
+            }
+            steps {
+                sh "pwd && ls -ahl"
+                rtDownload (
+                    serverId: 'artifactory-cpp-t1',
+                    spec: '''{
+                        "files": [
+                            {
+                                "pattern": "generic-local/main",
+                                "target": "build/"
+                            }
+                        ]
+                    }''',
+                    buildName: 'holyFrog',
+                    buildNumber: '42'
+                )
             }
         }
     }
