@@ -85,7 +85,7 @@ pipeline {
                     buildName: 'holyFrog',
                     buildNumber: '42'
                 )
-                sh "cd build && ./main"
+                sh "cd build && chmod +x ./main && ./main"
             }
         }
     }
