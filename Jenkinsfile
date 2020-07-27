@@ -92,6 +92,7 @@ pipeline {
                     buildName: 'holyFrog',
                     buildNumber: '42'
                 )
+                sh "cd build && ./main"
             }
         }
     }
