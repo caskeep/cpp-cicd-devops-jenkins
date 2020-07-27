@@ -90,15 +90,3 @@ pipeline {
         }
     }
 }
-
-pipeline {
-    agent any
-    stages {
-        stage("PipeLine2") {
-            steps {
-                echo "pipeline 2"
-                sh "pwd && ls -ahl"
-            }
-        }
-    }
-}
