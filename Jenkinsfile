@@ -2,7 +2,6 @@ pipeline {
     agent { label 'build' }
     stages {
         stage('Build') {
-            agent { label 'build' }
             steps {
                 echo "Build" 
                 sh "pwd && ls -ahl"
@@ -11,7 +10,6 @@ pipeline {
             }
         }
         stage('Test') {
-            agent { label 'build' }
             steps {
                 echo "Test" 
                 sh "pwd && ls -ahl"
@@ -19,7 +17,6 @@ pipeline {
             }
         }
         stage('Artifactory') {
-            agent { label 'build' }
             steps {
                 sh "pwd && ls -ahl"
                 rtUpload (
@@ -38,7 +35,6 @@ pipeline {
             }
         }
         stage('Clean for next build') {
-            agent { label 'build' }
             steps {
                 echo "cleanning" 
                 sh "pwd && ls -ahl"
@@ -46,7 +42,6 @@ pipeline {
             }
         }
         stage('Build container building env') {
-            agent { label 'build' }
             steps {
                 echo "Build container building env" 
                 sh "pwd && ls -ahl"
@@ -57,7 +52,6 @@ pipeline {
             }
         }
         stage('Build with container') {
-            agent { label 'build' }
             steps {
                 echo "Build with container" 
                 sh "pwd && ls -ahl"
@@ -68,7 +62,6 @@ pipeline {
             }
         }
         stage('Test with container') {
-            agent { label 'build' }
             steps {
                 echo "Test with container" 
                 sh "pwd && ls -ahl"
