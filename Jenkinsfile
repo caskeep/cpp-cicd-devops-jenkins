@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'build' }
     stages {
         stage('Build') {
             agent { label 'build' }
@@ -93,6 +93,18 @@ pipeline {
                     buildNumber: '42'
                 )
                 sh "cd build && ./main"
+            }
+        }
+    }
+}
+
+pipeline {
+    agent any
+    stages {
+        stage("PipeLine2") {
+            steps {
+                echo "pipeline 2"
+                sh "pwd && ls -ahl"
             }
         }
     }
