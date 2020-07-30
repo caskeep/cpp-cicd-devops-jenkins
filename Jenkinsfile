@@ -10,6 +10,9 @@ pipeline {
             }
         }
         stage('Test') {
+            options {
+                timeout(time: 3, unit: "MINUTES")
+            }
             steps {
                 echo "Test" 
                 sh "pwd && ls -ahl"
@@ -25,7 +28,7 @@ pipeline {
                         "files": [
                             {
                                 "pattern": "build/main",
-                                "target": "generic-local/"
+                                "target": "generic-local/${env.BRANCH_NAME}"
                             }
                         ]
                     }''',
@@ -85,7 +88,7 @@ pipeline {
                     buildName: 'holyFrog',
                     buildNumber: '42'
                 )
-                sh "cd build && chmod +x ./main && ./main"
+                sh "cd build && chmod +x ./main && ./main >> main.log"
             }
         }
     }
