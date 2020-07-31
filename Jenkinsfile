@@ -8,6 +8,7 @@ node {
         echo "test with static branch name env value ${feature_scripted}"
     }
     stage('Build') {
+        checkout scm
         echo "Start Build"
         sh ("pwd && ls -ahl")
         sh ("rm -rf build && mkdir -p build && cd build && cmake .. && cmake --build .")
@@ -21,7 +22,7 @@ node {
         echo "Start upload to artifactory"
         sh ("pwd && ls -ahl")
         echo "Start package to ${env.BRANCH_NAME}.tar.gz file"
-        sh ("cd build && tar -cf ${env.BRANCH_NAME}.tar.gz main")
+        sh ("cd build && tar -czvf ${env.BRANCH_NAME}.tar.gz main")
         def server = Artifactory.server 'artifactory-cpp-t1'
         def uploadSpec = """{
             "files": [
