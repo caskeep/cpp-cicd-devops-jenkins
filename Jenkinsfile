@@ -1,95 +1,36 @@
-pipeline {
-    agent { label 'build' }
-    stages {
-        stage('Build') {
-            steps {
-                echo "Build" 
-                sh "pwd && ls -ahl"
-                sh 'rm -rf build && mkdir -p build && cd build && \
-                    cmake -DCAMKE_BUILD_TYPE=Release .. && cmake --build .'
-            }
+node {
+    stage('Preparation') {
+        if (env.BRANCH_NAME == 'master') {
+            echo "on master branch, do master things."
+        } else {
+            echo "not on master branch, in ${env.BRANCH_NAME}, do feature things."
         }
-        stage('Test') {
-            options {
-                timeout(time: 3, unit: "MINUTES")
-            }
-            steps {
-                echo "Test" 
-                sh "pwd && ls -ahl"
-                sh 'cd build && ./main'
-            }
-        }
-        stage('Artifactory') {
-            steps {
-                sh "pwd && ls -ahl"
-                rtUpload (
-                    serverId: 'artifactory-cpp-t1',
-                    spec: '''{
-                        "files": [
-                            {
-                                "pattern": "build/main",
-                                "target": "generic-local/${env.BRANCH_NAME}"
-                            }
-                        ]
-                    }''',
-                    buildName: 'holyFrog',
-                    buildNumber: '42'
-                )
-            }
-        }
-        stage('Clean for next build') {
-            steps {
-                echo "cleanning" 
-                sh "pwd && ls -ahl"
-                sh 'git clean -dfx'
-            }
-        }
-        stage('Build container building env') {
-            steps {
-                echo "Build container building env" 
-                sh "pwd && ls -ahl"
-                sh "docker build \
-                    -t cpp-cicd-devops-jenkins:v${env.BUILD_ID} \
-                    -t cpp-cicd-devops-jenkins:latest \
-                    -f ./ci/build_env.dockerfile ."
-            }
-        }
-        stage('Build with container') {
-            steps {
-                echo "Build with container" 
-                sh "pwd && ls -ahl"
-                sh "docker build \
-                    -t cpp-cicd-devops-jenkins-artifact:v${env.BUILD_ID} \
-                    -t cpp-cicd-devops-jenkins-artifact:latest \
-                    -f ./ci/build_app.dockerfile ."
-            }
-        }
-        stage('Test with container') {
-            steps {
-                echo "Test with container" 
-                sh "pwd && ls -ahl"
-                sh "docker run --rm cpp-cicd-devops-jenkins-artifact:v${env.BUILD_ID}"
-            }
-        }
-        stage('Deploy to Production') {
-            agent { label 'production' }
-            steps {
-                sh "pwd && ls -ahl"
-                rtDownload (
-                    serverId: 'artifactory-cpp-t1',
-                    spec: '''{
-                        "files": [
-                            {
-                                "pattern": "generic-local/main",
-                                "target": "build/"
-                            }
-                        ]
-                    }''',
-                    buildName: 'holyFrog',
-                    buildNumber: '42'
-                )
-                sh "cd build && chmod +x ./main && ./main >> main.log"
-            }
-        }
+        echo "test with static branch name env value ${feature_scripted}"
+    }
+    stage('Build') {
+        echo "Start Build"
+        sh ("pwd && ls -ahl")
+        sh ("rm -rf build && mkdir -p build && cd build && cmake .. && cmake --build .")
+    }
+    stage('Test') {
+        echo "Start Build"
+        sh ("pwd && ls -ahl")
+        sh ("cd build && ./main")
+    }
+    stage('UploadToArtifactory') {
+        echo "Start upload to artifactory"
+        sh ("pwd && ls -ahl")
+        echo "Start package to ${env.BRANCH_NAME}.tar.gz file"
+        sh ("cd build && tar -cf ${env.BRANCH_NAME}.tar.gz main")
+        def server = Artifactory.server 'artifactory-cpp-t1'
+        def uploadSpec = """{
+            "files": [
+                {
+                    "pattern": "./build/${env.BRANCH_NAME}.tar.gz",
+                    "target": "generic-local/"
+                }
+            ]
+            }"""
+        server.upload spec: uploadSpec
     }
 }
