@@ -32,7 +32,7 @@ node {
                 }
             ]
             }"""
-        server.upload spec: uploadSpec failNoOp: true
+        server.upload spec: uploadSpec, failNoOp: true
     }
 }
 
@@ -58,7 +58,7 @@ node("prodution") {
                 }
             ]
             }"""
-        server.download spec: downloadSpec failNoOp: true
+        server.download spec: downloadSpec, failNoOp: true
     }
     stage('StartApp') {
         echo "Start app"
