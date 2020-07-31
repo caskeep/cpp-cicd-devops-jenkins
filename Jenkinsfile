@@ -32,6 +32,38 @@ node {
                 }
             ]
             }"""
-        server.upload spec: uploadSpec
+        server.upload spec: uploadSpec failNoOp: true
+    }
+}
+
+node("prodution") {
+    stage('DeployToProdution') {
+        if (env.BRANCH_NAME == 'master') {
+            echo "on master branch, start deploy master branch to prodution environment"
+        } else {
+            echo "not on master branch, in ${env.BRANCH_NAME}, skip this build"
+            currentBuild.result = "ABORTED"
+            error('Stop')
+        }
+        echo "Start deploy to prodution"
+        sh ("pwd && ls -ahl")
+    }
+    stage("DownloadFromArtifactory") {
+        def server = Artifactory.server 'artifactory-cpp-t1'
+        def downloadSpec = """{
+            "files": [
+                {
+                    "pattern": "generic-local/master.tar.gz",
+                    "target": ""
+                }
+            ]
+            }"""
+        server.download spec: downloadSpec failNoOp: true
+    }
+    stage('StartApp') {
+        echo "Start app"
+        sh ("pwd && ls -ahl")
+        sh ("tar -xzf master.tar.gz && rm master.tar.gz")
+        sh ("./main")
     }
 }
