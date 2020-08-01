@@ -35,7 +35,7 @@ node {
     }
 }
 
-node("prodution") {
+node() {
     stage('DeployToProdution') {
         if (env.BRANCH_NAME == 'master') {
             echo "on master branch, start deploy master branch to prodution environment"
