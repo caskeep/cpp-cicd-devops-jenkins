@@ -5,7 +5,6 @@ node {
         } else {
             echo "not on master branch, in ${env.BRANCH_NAME}, do feature things."
         }
-        echo "test with static branch name env value ${feature_scripted}"
     }
     stage('Build') {
         checkout scm
