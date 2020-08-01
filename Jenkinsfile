@@ -27,7 +27,7 @@ node {
             "files": [
                 {
                     "pattern": "./build/${env.BRANCH_NAME}.tar.gz",
-                    "target": "generic-local/"
+                    "target": "cpp-cicd-devops-jenkins/"
                 }
             ]
             }"""
@@ -52,7 +52,7 @@ node("prodution") {
         def downloadSpec = """{
             "files": [
                 {
-                    "pattern": "generic-local/master.tar.gz",
+                    "pattern": "cpp-cicd-devops-jenkins/master.tar.gz",
                     "target": ""
                 }
             ]
