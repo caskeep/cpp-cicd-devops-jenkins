@@ -1,4 +1,4 @@
-node {
+node () {
     stage('Preparation') {
         if (env.BRANCH_NAME == 'master') {
             echo "on master branch, do master things."
@@ -31,7 +31,8 @@ node {
                 }
             ]
             }"""
-        server.upload spec: uploadSpec, failNoOp: true
+        uploadInfo = server.upload spec: uploadSpec, failNoOp: true
+        server.publishBuildInfo uploadInfo
     }
 }
 
